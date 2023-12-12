@@ -55,7 +55,7 @@ uint32_t devmap_readl(int offset) {
         }
         
 
-    return *(volatile uint32_t *)(virtmem);
+    return *(volatile uint32_t *)(virtmem+offset);
 }
 
 void devmap_writel(int offset, uint32_t value) {
@@ -64,7 +64,7 @@ void devmap_writel(int offset, uint32_t value) {
         return;
     }
 
-    *(volatile uint32_t *)(virtmem) = value;
+    *(volatile uint32_t *)(virtmem+offset) = value;
 }
 
 void devmap_close(int len) {
@@ -80,7 +80,7 @@ void devmap_close(int len) {
 void devmap_unmap(void *virt_addr, int len) {
     
    if(mapped_base != NULL) {
-        printf("closing with munmap\n");
+        //printf("closing with munmap\n");
         munmap (virt_addr, len);
         close(fd);
    }

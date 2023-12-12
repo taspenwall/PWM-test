@@ -45,7 +45,7 @@ struct pinlist cv180x_pin[] = {
 
 int get_func(int pin) {
     devmap_open(PIN_MUX_BASE+cv180x_pin[pin].offset, 4);
-	uint32_t func = devmap_readl(PIN_MUX_BASE+cv180x_pin[pin].offset);
+	uint32_t func = devmap_readl(0);
 	devmap_close(4);
 	return func;
 
@@ -54,8 +54,8 @@ int get_func(int pin) {
 
 void set_func(int pin, uint32_t set_func) {
 	devmap_open(PIN_MUX_BASE+cv180x_pin[pin].offset, 4);
-	devmap_writel(PIN_MUX_BASE+cv180x_pin[pin].offset, set_func);
-	uint32_t func = devmap_readl(PIN_MUX_BASE+cv180x_pin[pin].offset);
+	devmap_writel(0, set_func);
+	uint32_t func = devmap_readl(0);
 	devmap_close(4);
 }
 
