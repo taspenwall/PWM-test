@@ -24,13 +24,50 @@
 
 
 //settings for pwm
-#define freq  100000// 1KHz
-#define duty 75 //75%
-#define count 3//30 pulses
+#define freq  800000// 800kHz
+#define Hduty 75 //75%
+#define Lduty 25 //25%
+#define count 1//30 pulses
 #define start 0b0100
-
+#define count_mode 1<<10
 #define pwmoe 0b0100
 
+
+void setup_pwm(){
+     devmap_open(base,1024);
+    //set the pwm registers
+    devmap_writel(PWM_OE, pwmoe); //output enable
+    
+    devmap_writel(PWM_MODE, count_mode);
+    devmap_writel(PWM_START, 0);
+    devmap_writel(PERIOD2, freq);
+    devmap_writel(PCOUNT2, count);
+}
+
+void kick_and_wait(){
+    devmap_writel(PWM_START, start);
+    while((devmap_readl(PWM_DONE) & (1<<2)) == 0); //wait while done
+
+    }
+
+void run_pulse (int value){
+    devmap_writel(PWM_START, 0); //set pwm start to 0
+    if(value == 1){
+        devmap_writel(HLPERIDO2, Hduty); // set helper period to high duty
+        kick_and_wait();
+        }
+    
+    else{
+        devmap_writel (HLPERIDO2, Lduty); //set helper period to low duty
+        kick_and_wait();
+    }
+}
+
+void cleanup(){
+    devmap_writel(PWM_START, 0);
+    devmap_writel(PWM_OE, 0);
+    devmap_close(1024);
+}
 
 void printbin(uint32_t x) {
     int i;
@@ -48,103 +85,16 @@ int main() {
 
 
     //set the pwm registers
-    devmap_open(base,1024);
-
-    volatile uint32_t pwmoei =  devmap_readl(PWM_OE);
-    printf("pwmoei: ");
-    printbin(pwmoei);
-    printf("\n");
-
-    devmap_writel(PWM_OE, 0b1111);
-    pwmoei =  devmap_readl(PWM_OE);
-    printf("pwmoei after: ");
-    printbin(pwmoei);
-    printf("\n");
-    
-    
-
-    devmap_writel(PWM_START, 0b0000);
-    volatile uint32_t startstatus0 =  devmap_readl(PWM_START);
-    printf("startstatus0: ");
-    printbin(startstatus0);
-    printf("\n");
-
-    
-
-    devmap_writel(PERIOD2, freq);
-    volatile uint32_t period2i =  devmap_readl(PERIOD2);
-    printf("period2i: %d\n", period2i);
-    devmap_writel(HLPERIDO2, freq/4);
-    volatile uint32_t hlperiod2i =  devmap_readl(HLPERIDO2);
-    printf("hlperiod2i: %d\n", hlperiod2i);
-
-    devmap_writel(PCOUNT2, count);
-    volatile uint32_t pcount2i =  devmap_readl(PCOUNT2);
-    printf("pcount2i: %d\n", pcount2i);
-
-    devmap_writel(PWM_MODE,(1<<10));
-    volatile uint32_t pinmodei =  devmap_readl(PWM_MODE);
-    printf("pinmodei: %d\n", pinmodei);
-
-    volatile uint32_t startstatus =  devmap_readl(PWM_START);
-    printf("startstatus b4: ");
-    printbin(startstatus);
-    printf("\n");
-
-    devmap_writel(PWM_START, start);
-    startstatus =  devmap_readl(PWM_START);
-    printf("startstatus after: ");
-    printbin(startstatus);
-    printf("\n");
-
-
-
-    
-
-    devmap_close(208);
-
-/*    devmap_open(base+PERIOD2,4);
-    volatile uint32_t period2 =  devmap_readl(0);
-    printf("period2: %02x\n", period2);
-    devmap_close(4);
-
-    devmap_open(base+HLPERIDO2,4);
-    volatile uint32_t hlperiod2 =  devmap_readl(0);
-    printf("hlperiod2: %02x\n", hlperiod2);
-    devmap_close(4);
-    
-    devmap_open(base+PCOUNT2,4);
-    volatile uint32_t pcount2 =  devmap_readl(0);
-    printf("pcount2: %02x\n", pcount2);
-    devmap_close(4);
-
-    devmap_open(base+PWM_MODE,4);
-    volatile uint32_t pinmode =  devmap_readl(0);
-    printf("pinmode: %02x\n", pinmode);
-    devmap_close(4);
-
-
-
-    devmap_open(base+PWM_START,4);
-    uint32_t startstatus2 =  devmap_readl(0);
-    printf("startstatus2: ");
-    printbin(startstatus2);
-    printf("\n");
-    devmap_close(4);
-*/
-  
-    for (int i = 0; i < 15; i++){
-        devmap_open(base+PWM_DONE,4);
-        uint32_t donestatus =  devmap_readl(0);
-        printf("donestatus: ");
-        printbin(donestatus);
-        printf("\n");
-        devmap_close(4);
-        sleep(1);   
-
-
-    
-    }     
+    setup_pwm();
+    run_pulse(1);
+    run_pulse(0);
+    run_pulse(1);
+    run_pulse(0);
+    run_pulse(1);
+    run_pulse(1);
+    run_pulse(0);
+    run_pulse(0);
+    cleanup();
 
     
 
