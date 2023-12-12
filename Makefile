@@ -1,4 +1,4 @@
-TARGET=aht21b
+TARGET=pwm-test
 
 ifeq (,$(TOOLCHAIN_PREFIX))
 $(error TOOLCHAIN_PREFIX is not set)

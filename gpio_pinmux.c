@@ -6,17 +6,12 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
+#include "gpio_pinmux.h"
 
 #define PIN_MUX_BASE  0x03001000
 
 
 
-
-
-struct pinlist {
-	char name[32];
-	uint32_t offset;
-} pinlist_st;
 
 struct pinlist cv180x_pin[] = {
 	{ "GP0", 0x4c },				// IIC0_SCL
