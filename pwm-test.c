@@ -27,9 +27,9 @@
 
 
 //settings for pwm
-#define freq  125// 125 is the calcualted for 800kHz calulated frequency,  It seem that I have to go way lower for a 1.25us period.
-#define Hduty  12//56% is the claculated duty cycle for .7us high time to write a 1
-#define Lduty  1//28%  is the claculated duty cycle for .35us high time   to write a 0
+#define freq  125   // 125 is the calcualted for 800kHz calulated frequency,  It seem that I have to go way lower for a 1.25us period.
+#define Hduty  56  //56% is the claculated duty cycle for .7us high time to write a 1
+#define Lduty  28  //28%  is the claculated duty cycle for .35us high time   to write a 0
 #define count 1//30 pulses
 #define start 0b0100
 #define pwm_mode ((1<<10) | (1<<2)) // set the pmode to to pulse 1<<num+8 and set the polarity to control the high period 1<<2
