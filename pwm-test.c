@@ -24,7 +24,7 @@
 
 
 //settings for pwm
-#define freq  800000// 800kHz
+#define freq  900000// 800kHz
 #define Hduty 75 //75%
 #define Lduty 25 //25%
 #define count 1//30 pulses
@@ -38,27 +38,26 @@ void setup_pwm(){
     //set the pwm registers
     devmap_writel(PWM_OE, pwmoe); //output enable
     
-    devmap_writel(PWM_MODE, count_mode);
-    devmap_writel(PWM_START, 0);
-    devmap_writel(PERIOD2, freq);
-    devmap_writel(PCOUNT2, count);
+    devmap_writel(PWM_MODE, count_mode); //set count mode
+    devmap_writel(PWM_START, 0); //set start to 0
+    devmap_writel(PERIOD2, freq); //set period to 800kHz
+    devmap_writel(PCOUNT2, count);  //set for 1 pulse
 }
 
 void kick_and_wait(){
     devmap_writel(PWM_START, start);
-    while((devmap_readl(PWM_DONE) & (1<<2)) == 0); //wait while done
+    for(volatile int i = 0; i < 2; i++); //wait for pulse to finish
 
-    }
-
+}
 void run_pulse (int value){
-    devmap_writel(PWM_START, 0); //set pwm start to 0
+    devmap_writel(PWM_START, 0); //clear the start bit
     if(value == 1){
-        devmap_writel(HLPERIDO2, Hduty); // set helper period to high duty
+        devmap_writel(HLPERIDO2, (Hduty*freq)/100); // set helper period to high duty
         kick_and_wait();
         }
     
     else{
-        devmap_writel (HLPERIDO2, Lduty); //set helper period to low duty
+        devmap_writel (HLPERIDO2, (Lduty*freq)/100); //set helper period to low duty
         kick_and_wait();
     }
 }
