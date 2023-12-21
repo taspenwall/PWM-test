@@ -27,12 +27,12 @@
 
 
 //settings for pwm
-#define freq  125   // 125 is the calcualted for 800kHz calulated frequency,  It seem that I have to go way lower for a 1.25us period.
-#define Hduty  56  //56% is the claculated duty cycle for .7us high time to write a 1
-#define Lduty  28  //28%  is the claculated duty cycle for .35us high time   to write a 0
+#define freq  100   // 125 is the calcualted for 800kHz calulated frequency,  It seem that I have to go way lower for a 1.25us period.
+#define Hduty  65  //56% is the claculated duty cycle for .7us high time to write a 1
+#define Lduty  10  //28%  is the claculated duty cycle for .35us high time   to write a 0
 #define count 1//30 pulses
 #define start 0b0100
-#define pwm_mode ((1<<10) | (1<<2)) // set the pmode to to pulse 1<<num+8 and set the polarity to control the high period 1<<2
+#define pwm_mode (1<<10) // set the pmode to to pulse 1<<num+8 and set the polarity to control the high period 1<<2
 #define pwmoe 0b0100
 
 
@@ -60,7 +60,7 @@ void kick_and_wait(){
 }
 void run_pulse (int value){
     devmap_writel(PWM_START, 0); //clear the start bit
-    if(value == 1){
+    if(value == 0){
        devmap_writel(HLPERIDO2, Hduty*freq/100); // set helper period to high duty
         kick_and_wait();
         }
@@ -95,12 +95,20 @@ int main() {
     //set the pwm registers
     setup_pwm();
     
-    run_pulse(1);
-    run_pulse(1);
-    run_pulse(0);
-    run_pulse(0);
-    
+    for(int i = 0; i<8; i++){
+        run_pulse(0);
+        
+    }
 
+    for(int i = 0; i<8; i++){
+        run_pulse(0);
+        
+    }
+
+    for(int i = 0; i<8; i++){
+        run_pulse(1);
+        
+    }
     
 
     printf("mode: ");
