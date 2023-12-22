@@ -1,4 +1,4 @@
-TARGET=pwm-test
+TARGET=led-test
 
 ifeq (,$(TOOLCHAIN_PREFIX))
 $(error TOOLCHAIN_PREFIX is not set)
