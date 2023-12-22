@@ -13,7 +13,7 @@
 
 
 #define PIN_NUM 2
-#define num_leds 3
+#define num_leds 300
 
 
 
@@ -24,60 +24,56 @@ typedef struct {
 } led_t;
 
 
+void shiftSetColor(led_t *strand, const led_t *static_colors, int *currentColorIndex, int num_colors){
+    for (int i = num_leds - 1; i > 4; i--){
+        strand[i] = strand[i-1]; // shift down the row
+    }
+
+
+    for (int j=0; j<5; j++){
+        strand[0+j] = static_colors[*currentColorIndex];
+    }
+    //strand[0] = static_colors[*currentColorIndex]; // set the first led to the current color
+    *currentColorIndex = ((*currentColorIndex + 1) % num_colors); // increment the color index
+    
+    
+}
+
+
 int main (){
 
     set_func(PIN_NUM, 0x7);
     setup_pwm();
-    bool state = true;
-
-    while (1){
-      
     
-    
-    led_t led[num_leds];
-
-        if(state){
-
-        for (int i = 0; i < num_leds; i++){
-            if (i%2 == 0){
-            led[i].GREEN = 55;
-            led[i].RED = 0;
-            led[i].BLUE = 0;
-            }
-
-        else {
-            led[i].GREEN = 0;
-            led[i].RED = 55;
-            led[i].BLUE = 0;
-            }
-        }
-        }
-        else {
-            for (int i = 0; i < num_leds; i++){
-            if (i%2 == 0){
-            led[i].GREEN = 0;
-            led[i].RED = 55;
-            led[i].BLUE = 0;
-            }
-
-        else {
-            led[i].GREEN = 55;
-            led[i].RED = 0;
-            led[i].BLUE = 0;
-            }
-        }
-        }
-
-    for (int i = 0; i < num_leds; i++){
-        address_led(led[i].GREEN, led[i].RED, led[i].BLUE);
+    const led_t static_colors[7] = {
+        {0, 255, 0}, //red
+        {65, 255, 0},//orange
+        {255, 255, 0}, //yellow
+        {255, 0, 0}, //green
+        {150, 0, 150}, //indigo
+        {0,150,250}, //violet
+        {0, 0, 255}, //blue 
         
-    }
-    state = !state;
-    delayMicroseconds(1000000);
+    };
+   
+    led_t strand[num_leds];
+
+    int currentColorIndex = 0;
 
     
+
+    while (true ){
+
+        shiftSetColor(strand, static_colors, &currentColorIndex, sizeof(static_colors)/sizeof(static_colors[0])); // shift the colors down the strand, and set the first led to the next color
+        for (int i = 0; i < num_leds; i++){
+            address_led(strand[i].GREEN, strand[i].RED, strand[i].BLUE); //send to the leds
+        }
+
+       delayMicroseconds(1000000); 
     }
+    
     pwm_cleanup();
+    printf("Done\n");
 
     return 0;
 }
