@@ -12,7 +12,7 @@
 
 
 #define PIN_NUM 2 //GPIO 2 
-int num_leds = 300;
+int num_leds = 1;
 
 
 
@@ -26,13 +26,13 @@ typedef struct {
 void handle_sigint(int sig) 
 { 
     pwm_cleanup();
-    printf("Caught signal now %d\n", sig);
+    printf("Caught signal %d\n", sig);
     exit(0);
 } 
 
 
 
-void shiftSetColor(led_t *strand, const led_t *static_colors, int *currentColorIndex, int num_colors){
+/*void shiftSetColor(led_t *strand, const led_t *static_colors, int *currentColorIndex, int num_colors){
     for (int i = num_leds - 1; i >=5 ; i--){
         strand[i] = strand[i-5]; // shift down the row
     }
@@ -46,7 +46,7 @@ void shiftSetColor(led_t *strand, const led_t *static_colors, int *currentColorI
     
     
 }
-
+*/
 
 int main (){
     
@@ -70,10 +70,25 @@ int main (){
     led_t strand[num_leds];
 
     int currentColorIndex = 0;
-  
+    printf("starting MTF\n");
+
+    for (int k = 0; k < 300; k++) {
+    
+        printf("sending\n");
+        for (int i = 0; i < num_leds; i++){
+            address_led(0, 255, 0);
+            delayMicroseconds(30); //send to the leds
+        }
+    
+        delayMicroseconds(25000);
+    
+        
+         num_leds += 1;
+}   
+    
         
          
-    while (1){
+    /*while (1){
 
         shiftSetColor(strand, static_colors, &currentColorIndex, sizeof(static_colors)/sizeof(static_colors[0])); // shift the colors down the strand, and set the first led to the next color
         for (int i = 0; i < num_leds; i++){
@@ -82,8 +97,10 @@ int main (){
 
        delayMicroseconds(500000); 
     }
-    
+    */
 
-   
+   for (int i = 0; i < num_leds; i++){
+            address_led(0, 0, 0); //send to the leds
+        }
     return 0;
 }

@@ -12,7 +12,7 @@
 
 
 #define PIN_NUM 2 //GPIO 2 
-int num_leds = 300;
+#define num_leds 300
 
 
 
@@ -26,7 +26,7 @@ typedef struct {
 void handle_sigint(int sig) 
 { 
     pwm_cleanup();
-    printf("Caught signal now %d\n", sig);
+    printf("Caught signal %d\n", sig);
     exit(0);
 } 
 
@@ -62,7 +62,7 @@ int main (){
         {255, 0, 0}, //green
         {150, 0, 150}, //indigo
         {0, 0, 255}, //blue 
-        {0, 255, 100}, //violet
+        {0,150,250}, //violet
         
         
     };
@@ -70,9 +70,9 @@ int main (){
     led_t strand[num_leds];
 
     int currentColorIndex = 0;
-  
-        
-         
+
+    
+
     while (1){
 
         shiftSetColor(strand, static_colors, &currentColorIndex, sizeof(static_colors)/sizeof(static_colors[0])); // shift the colors down the strand, and set the first led to the next color
@@ -80,10 +80,10 @@ int main (){
             address_led(strand[i].GREEN, strand[i].RED, strand[i].BLUE); //send to the leds
         }
 
-       delayMicroseconds(500000); 
+       delayMicroseconds(50000); 
     }
     
 
-   
+
     return 0;
 }
