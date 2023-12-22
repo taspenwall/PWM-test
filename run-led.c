@@ -11,7 +11,7 @@
 
 
 
-#define PIN_NUM 2
+#define PIN_NUM 2 //GPIO 2 
 #define num_leds 300
 
 
@@ -38,7 +38,7 @@ void shiftSetColor(led_t *strand, const led_t *static_colors, int *currentColorI
     }
 
 
-    for (int j=0; j<5; j++){
+    for (int j=0; j<5; j++){ // make the 1st 5 leds the current color
         strand[j] = static_colors[*currentColorIndex];
     }
     //strand[0] = static_colors[*currentColorIndex]; // set the first led to the current color
@@ -52,7 +52,7 @@ int main (){
     
     
     signal(SIGINT, handle_sigint);
-    set_func(PIN_NUM, 0x7);
+    set_func(PIN_NUM, 0x7);//if you change the pin number you need to lookup the function number of the PWM pin in the excel sheet.
     setup_pwm();
     
     const led_t static_colors[7] = {
